@@ -1,18 +1,11 @@
-import firebase from 'firebase/app';
+import firebase from './firebase';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
 
-const config = {
-  apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: `${process.env.REACT_APP_PROJECT_ID}.firebaseapp.com`,
-  databaseURL: `https://${process.env.REACT_APP_PROJECT_ID}.firebaseio.com`,
-  projectId: `${process.env.REACT_APP_PROJECT_ID}`,
-  storageBucket: `${process.env.REACT_APP_PROJECT_ID}.appspot.com`,
-  messagingSenderId: process.env.MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID,
-};
+const database = firebase.database(); // Gets the Database service for the default app or a given app.
+const ref = firebase.database().ref(); // refrence to the root location of the database.
+const firebaseAuth = firebase.auth(); // Gets the Auth service for the app.
+const storageRef = firebase.storage().ref(); // Points to the root storage reference.
 
-firebase.initializeApp(config);
-
-export default firebase;
+export { database, ref, firebaseAuth, storageRef, firebase };

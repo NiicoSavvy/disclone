@@ -47,7 +47,7 @@ class Login extends React.Component {
   handleSubmit = e => {
     e.preventDefault();
 
-    const errors = this.validate(this.state.data);
+    const errors = this.onValidate(this.state.data);
     this.setState({ errors });
 
     if (Object.keys(errors).length === 0) {
@@ -57,9 +57,8 @@ class Login extends React.Component {
           this.state.data.email,
           this.state.data.password
         )
-        .then(signedInUser => {
-          //console.log(signedInUser);
-          //TODO: Toast Welcome back signedInUser.user.displayName
+        .then(({ user }) => {
+          //TODO: Toast Welcome back user.displayName
           this.setState({ loading: false });
         })
         .catch(err => {
@@ -69,7 +68,7 @@ class Login extends React.Component {
     }
   };
 
-  validate = data => {
+  onValidate = data => {
     const errors = {};
 
     //if (!isEmail(data.email)) errors.email = "Invalid email";

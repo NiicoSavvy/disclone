@@ -52,7 +52,7 @@ class Register extends React.Component {
   handleSubmit = e => {
     e.preventDefault();
 
-    const errors = this.validate(this.state.data);
+    const errors = this.onValidate(this.state.data);
     this.setState({ errors });
 
     if (Object.keys(errors).length === 0) {
@@ -62,48 +62,44 @@ class Register extends React.Component {
           this.state.data.email,
           this.state.data.password
         )
-        .then(createdUser => {
-          // console.log(createdUser);
-          createdUser.user
+        .then(({ user }) => {
+          user
             .updateProfile({
               displayName: this.state.data.username,
               photoURL: `https://www.gravatar.com/avatar/${md5(
-                createdUser.user.email
+                user.email
               )}?d=identicon`,
             })
             .then(() => {
-              this.saveUser(createdUser).then(() => {
-                //TODO: toast Welcome createdUser.user.displayName
+              this.onSave(user).then(() => {
+                //TODO: toast Welcome user.displayName
                 this.setState({ loading: false });
               });
             })
             .catch(err => {
-              // console.log(err);
               this.handleGlobalError(err.message);
               this.setState({ loading: false });
             });
         })
         .catch(err => {
-          // console.log(err);
           this.handleGlobalError(err.message);
           this.setState({ loading: false });
         });
     }
   };
 
-  saveUser = createdUser => {
-    return database
+  onSave = user =>
+    database
       .ref('users')
-      .child(createdUser.user.uid)
+      .child(user.uid)
       .set({
-        id: createdUser.user.uid,
-        username: createdUser.user.displayName,
-        avatar: createdUser.user.photoURL,
+        id: user.uid,
+        username: user.displayName,
+        avatar: user.photoURL,
         createdAt: firebase.database.ServerValue.TIMESTAMP,
       });
-  };
 
-  validate = data => {
+  onValidate = data => {
     const errors = {};
 
     if (!data.username) errors.username = 'Username cannot be blank';
@@ -112,7 +108,7 @@ class Register extends React.Component {
     //if (!isEmail(data.email)) errors.email = "Invalid email";
 
     if (!data.password) errors.password = 'Password cannot be blank';
-    if (data.password.length < 6) errors.password = 'Password too Short';
+    if (data.password.length < 8) errors.password = 'Password too Short';
 
     return errors;
   };
